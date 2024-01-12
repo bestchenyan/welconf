@@ -21,6 +21,14 @@ export default defineConfig({
   },
 
   build: {
+    // 类型: boolean | 'esbuild' | 'terser'
+    // 默认为 `esbuild`
+    minify: 'esbuild',
+    // 产物目标环境
+    target: 'es6',
+    // 如果 minify 为 terser，可以通过下面的参数配置具体行为
+    // https://terser.org/docs/api-reference#minify-options
+    terserOptions: {},
     rollupOptions: {
       output: {
         manualChunks: {
@@ -28,6 +36,8 @@ export default defineConfig({
           'react-vendor': ['react', 'react-dom'],
           // 将 Lodash 库的代码单独打包
           lodash: ['lodash-es'],
+          // 将组件库的代码打包
+          library: ['antd'],
         },
       },
     },
