@@ -24,7 +24,15 @@
     "strictNullChecks": true,
     "types": [
       "vite-plugin-svgr/client"
-    ]
+    ],
+    "paths": {
+      "*": [
+        "./@types/*"
+      ],
+      "@/*": [
+        "./src/*"
+      ]
+    },
   },
   "include": [
     "src"

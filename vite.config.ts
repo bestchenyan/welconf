@@ -15,6 +15,8 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
+      // 路径别名
+      '@': path.join(__dirname, 'src'),
       // 图片别名
       '@assets': path.join(__dirname, 'src/assets'),
     },
