@@ -11,13 +11,14 @@ export default defineConfig({
     svgr(),
     viteStylelint({
       exclude: ['node_modules'],
+      fix: true,
     }),
   ],
   resolve: {
     alias: {
       // 路径别名
       '@': path.join(__dirname, 'src'),
-      // 图片别名
+      // 资源别名
       '@assets': path.join(__dirname, 'src/assets'),
     },
   },
@@ -43,5 +44,14 @@ export default defineConfig({
         },
       },
     },
+  },
+
+  css: {
+    preprocessorOptions: {
+      scss: {
+        // additionalData: '@import "@assets/styles/index.scss";',
+      },
+    },
+    devSourcemap: true,
   },
 });

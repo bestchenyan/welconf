@@ -1,0 +1,57 @@
+@charset 'UTF-8';
+
+body,
+#root {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: transparent;
+}
+
+body {
+  margin: 0;
+  color: rgb(255 255 255 / 80%);
+}
+
+#root {
+  position: relative;
+  overflow: auto;
+  background: linear-gradient(180deg, #303750 0%, #131930);
+}
+
+ul,
+li {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+details,
+summary {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+
+  :focus {
+    outline: none;
+  }
+}
+
+img {
+  vertical-align: middle;
+  border-style: none;
+}
+
+p,
+dl,
+dd,
+dt,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  padding: 0;
+  margin: 0;
+}
