@@ -1,5 +1,16 @@
 .layout {
   .header {
     height: 60px;
+
+    .menu,
+    .logo,
+    .user {
+      line-height: 60px;
+      text-align: center;
+    }
+
+    .logo {
+      font-size: 32px;
+    }
   }
 }

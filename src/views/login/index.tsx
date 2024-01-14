@@ -1,7 +1,7 @@
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { Button, Checkbox, Form, Input } from 'antd';
 import JSEncrypt from 'jsencrypt';
-import { useNavigate, type LoaderFunctionArgs } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { sm2 } from 'sm-crypto';
 
 import { ResponseData } from '@/common/interface/axios';
@@ -17,15 +17,6 @@ interface FormData {
   username: string;
   password: string;
   remember: boolean;
-}
-export function loader({ request }: LoaderFunctionArgs) {
-  // if (Credential.token) {
-  //   return redirect('/');
-  // }
-  // 这里做免密
-
-  console.log(request);
-  return null;
 }
 
 export default function Login() {
@@ -48,29 +39,13 @@ export default function Login() {
     const { data: result } = await axios.post<AuthToken>('/oauth/extras/token', params);
     if (!result.access_token) {
       console.error('登录失败:', result);
+      logOut();
       return;
     }
 
     Credential.tokenTemporary = result.access_token;
     Credential.user = result.user;
-    navigate('/');
-  };
-
-  const getEncrypt = async (password: string) => {
-    const publicKey = await getPublicKey();
-    Storage.set('encryptPublicKey', publicKey.result);
-    if (!publicKey?.result) return password;
-    const encryptType = await getEncryptType();
-    Storage.set('encryptPublicType', encryptType?.result);
-    if (encryptType?.result === 'rsa') {
-      const encryptor = new JSEncrypt() as unknown;
-      (encryptor as { setPublicKey: (val: string) => void }).setPublicKey(publicKey.result);
-      return (encryptor as { encrypt: (val: string) => void }).encrypt(password);
-    } else if (encryptType?.result === 'sm2') {
-      return sm2.doEncrypt(password, publicKey.result, 1);
-    } else {
-      return password;
-    }
+    navigate('/space');
   };
 
   return (
@@ -111,6 +86,27 @@ export default function Login() {
       </Form>
     </div>
   );
+}
+
+export function logOut() {
+  Credential.clear();
+}
+
+async function getEncrypt(password: string) {
+  const publicKey = await getPublicKey();
+  Storage.set('encryptPublicKey', publicKey.result);
+  if (!publicKey?.result) return password;
+  const encryptType = await getEncryptType();
+  Storage.set('encryptPublicType', encryptType?.result);
+  if (encryptType?.result === 'rsa') {
+    const encryptor = new JSEncrypt() as unknown;
+    (encryptor as { setPublicKey: (val: string) => void }).setPublicKey(publicKey.result);
+    return (encryptor as { encrypt: (val: string) => void }).encrypt(password);
+  } else if (encryptType?.result === 'sm2') {
+    return sm2.doEncrypt(password, publicKey.result, 1);
+  } else {
+    return password;
+  }
 }
 
 async function getPublicKey() {

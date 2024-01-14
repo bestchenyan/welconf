@@ -1,4 +1,5 @@
 import Cookies from 'js-cookie';
+import JSEncrypt from 'jsencrypt';
 
 import Storage from './storage';
 
@@ -46,10 +47,11 @@ export class Credential {
         -----END PUBLIC KEY-----`,
     encryptor: null,
     init: function () {
-      //   this.encryptor = new JSEncrypt();
-      //   this.encryptor.setPublicKey(this.publicKey);
-      //   this.encryptor.setPrivateKey(this.prKey);
-      //   Credential.cookies = this.cookies;
+      this.encryptor = new JSEncrypt() as unknown;
+      this.encryptor.setPublicKey(this.publicKey);
+      this.encryptor.setPrivateKey(this.prKey);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      Credential.cookies = this.cookies;
     },
     cookies: Cookies.withConverter({
       write: function (value) {

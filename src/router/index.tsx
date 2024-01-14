@@ -1,8 +1,10 @@
-import { createBrowserRouter, redirect } from 'react-router-dom';
+import { lazy, Suspense } from 'react';
+import { createBrowserRouter } from 'react-router-dom';
 
-import { Credential } from '@/common/utils/credential';
-import Layout from '@/views/layout';
-import LoginPage, { loader as loginLoader } from '@/views/login';
+const Layout = lazy(() => import('@/views/layout'));
+const Login = lazy(() => import('@/views/login'));
+const Portal = lazy(() => import('@/views/app/portal'));
+const Space = lazy(() => import('@/views/app/space'));
 
 const routes = [
   {
@@ -11,45 +13,42 @@ const routes = [
     Component: Layout,
     children: [
       {
-        index: true,
-        meta: '首页',
-        Component: PublicPage,
+        path: '/portal',
+        meta: {
+          title: '首页',
+          header: true,
+        },
+        element: (
+          <Suspense>
+            <Portal />
+          </Suspense>
+        ),
       },
       {
-        path: 'protected',
-        label: '保护页',
-        loader: protectedLoader,
-        Component: ProtectedPage,
+        path: '/space',
+        meta: {
+          title: '我的空间',
+          header: true,
+        },
+        element: (
+          <Suspense>
+            <Space />
+          </Suspense>
+        ),
       },
     ],
   },
   {
     path: 'login',
-    loader: loginLoader,
-    Component: LoginPage,
+    element: (
+      <Suspense>
+        <Login />
+      </Suspense>
+    ),
   },
 ];
 
 const router = createBrowserRouter(routes);
 
-function PublicPage() {
-  return <h3>Public</h3>;
-}
-
-function protectedLoader() {
-  // If the user is not logged in and tries to access `/protected`, we redirect
-  // them to `/login` with a `from` parameter that allows login to redirect back
-  // to this page upon successful authentication
-
-  if (!Credential.token) {
-    return redirect('/login?');
-  }
-
-  return null;
-}
-
-function ProtectedPage() {
-  return <h3>Protected</h3>;
-}
 export { routes };
 export default router;

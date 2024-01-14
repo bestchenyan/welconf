@@ -1,9 +1,14 @@
-import { Col, Menu, Row } from 'antd';
-import { Link, Outlet, useLocation } from 'react-router-dom';
+import { Avatar, Col, Menu, Popover, Row } from 'antd';
+import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
+
+import { Credential } from '@/common/utils/credential';
+import { routes } from '@/router';
 
 import './index.scss';
 
-import { useState } from 'react';
+import { UserOutlined } from '@ant-design/icons';
+
+import { axios } from '@/common/utils/axios';
 
 export default function Layout() {
   return (
@@ -17,21 +22,37 @@ export default function Layout() {
 }
 
 function Header() {
+  const navigate = useNavigate();
+
   const location = useLocation();
   // 当前路由路径
   const currentPath = location.pathname;
+  const menuList =
+    routes
+      .find((item) => item.id === 'app')
+      ?.children!.filter((item) => item.meta.header)
+      .map((item) => {
+        return {
+          path: item.path,
+          label: item.meta.title,
+        };
+      }) ?? [];
 
-  const [menuList] = useState([
-    { path: '/', label: '首页' },
-    { path: '/protected', label: '保护页' },
-  ]);
+  const logOut = async () => {
+    await axios.post('/oauth/extras/token/revoke');
+    Credential.clear();
+    navigate('/login');
+  };
+  const content = <div onClick={logOut}>退出登录 </div>;
 
   return (
     <header className="header">
       <Row>
-        <Col span={2}>col-8</Col>
+        <Col className="logo" span={2}>
+          LOGO
+        </Col>
         <Col span={20}>
-          <Menu mode="horizontal" selectedKeys={[currentPath]}>
+          <Menu className="menu" mode="horizontal" selectedKeys={[currentPath]}>
             {menuList.map((route) => (
               <Menu.Item key={route.path}>
                 <Link to={route.path}>{route.label}</Link>
@@ -39,7 +60,11 @@ function Header() {
             ))}
           </Menu>
         </Col>
-        <Col span={2}>col-8</Col>
+        <Col className="user" span={2}>
+          <Popover content={content}>
+            <Avatar icon={<UserOutlined />} />
+          </Popover>
+        </Col>
       </Row>
     </header>
   );
